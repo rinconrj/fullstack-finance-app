@@ -11,10 +11,10 @@ interface CustomSelect {
 export default function CustomSelect({title, label, className, options}:CustomSelect) {
   const [selectedOption, setSelectedOption] = useState('');
 
-  const handleSelectChange = (event) => {
+  const handleSelectChange = (event):void => {
     setSelectedOption(event.target.value);
   };
-console.log(className);
+
   return (
     <div className={className || "w-72"}>
       {label && <label htmlFor={title} className="block text-lg font-medium text-gray-700">
