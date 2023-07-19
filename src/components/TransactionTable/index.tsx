@@ -15,187 +15,18 @@ import {
   Select,
   Checkbox,
 } from "@material-tailwind/react";
-import { useState } from "react";
+import { FormEvent, use, useEffect, useState } from "react";
 import { Modal } from "@mui/base";
 import { Box } from "@mui/material";
 import CustomSelect from "../CustomSelect";
 import Row from "./components/EditableRow";
 import RowSelect from "./components/SelectEditableRow";
+import { api } from "~/utils/api";
+import { useSession } from "next-auth/react";
 
-const TABLE_HEAD = ["Transaction", "Amount", "Date", "Status", "Account"];
+const TABLE_HEAD = ["Description", "Amount", "Date", "Category", "Account"];
 
-const TABLE_ROWS: TableRow[] = [
-  {
-    img: "/img/logos/logo-spotify.svg",
-    name: "Spotify",
-    amount: "$2,500",
-    date: "Wed 3:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-amazon.svg",
-    name: "Amazon",
-    amount: "$5,000",
-    date: "Wed 1:00pm",
-    status: "paid",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-pinterest.svg",
-    name: "Pinterest",
-    amount: "$3,400",
-    date: "Mon 7:40pm",
-    status: "pending",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-google.svg",
-    name: "Google",
-    amount: "$1,000",
-    date: "Wed 5:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-];
+const TABLE_ROWS: TableRow[] = []
 
 
 const style = {
@@ -213,34 +44,29 @@ const style = {
 
 
 
-const AddRowModal: React.FC<{ open: boolean; onClose: () => void}> = ({
+const AddRowModal: React.FC<{ open: boolean; onClose: () => void; handelSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;}> = ({
   open,
-  onClose
+  onClose,
+  handelSubmit,
 }) => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Retrieve the form values and perform necessary processing
-    onClose();
-  };
 
   return (
     <Modal
       open={open}
-      onClose={onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
         <form
           className="mt-8 mb-2 w-80 max-w-screen-lg"
-          onSubmit={handleSubmit}
+          onSubmit={handelSubmit}
         >
           <div className="mb-4 flex flex-col gap-6">
             <input
               type="text"
-              name="transaction"
+              name="description"
               className="input"
-              placeholder="transaction"
+              placeholder="description"
             />
             <input
               type="text"
@@ -255,8 +81,8 @@ const AddRowModal: React.FC<{ open: boolean; onClose: () => void}> = ({
               placeholder="date"
             />
             <CustomSelect
-              title={"status"}
-              options={["PAID", "PENDING", "CANCELED"]}
+              title={"category"}
+              options={["service", "food", "spend"]}
             />
             <input
               type="select"
@@ -275,9 +101,20 @@ const AddRowModal: React.FC<{ open: boolean; onClose: () => void}> = ({
 };
 
 const TransactionTable: React.FC = () => {
+  const { data: session} = useSession()
+  const mutation = api.transaction.create.useMutation()
+  const data = api.transaction.getAll.useQuery()
   const [openModal, setOpenModal] = useState(false);
   const [editableRowIndex, setEditableRowIndex] = useState(-1);
-  const [tableRows, setTableRows] = useState(TABLE_ROWS);
+  const [tableRows, setTableRows] = useState(data.data);
+
+
+  useEffect(() => {
+    if (data.data) {
+      setTableRows(data.data);
+    }
+  }
+  , [data.data]);
 
   const handleOpenModal = (index: number) => {
     setEditableRowIndex(index);
@@ -294,22 +131,40 @@ const TransactionTable: React.FC = () => {
     field: keyof TableRow,
     value: string
   ) => {
-    const updatedRows = [...tableRows];
+    const updatedRows: any = [...tableRows];
 
-    updatedRows[index][field] = value;
+      updatedRows[index] = {
+        ...updatedRows[index],
+        [field]: value,
+      };
 
-    setTableRows(updatedRows);
+
+      setTableRows(updatedRows);
   };
 
   const handleAddRow = () => {
     setOpenModal(true);
   };
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    mutation.mutate({
+        description: event.currentTarget.description.value,
+        amount: event.currentTarget.amount.value,
+        date: event.currentTarget.date.value,
+        category: event.currentTarget.category.value,
+        account: event.currentTarget.account.value,
+        userId: session?.user?.id
+
+    }as any);
+
+    handleCloseModal()
+  };
 
   return (
     <>
     <Card className="h-full w-full overflow-hidden">
-      <AddRowModal open={openModal} onClose={handleCloseModal} />
+      <AddRowModal open={openModal} onClose={handleCloseModal} handelSubmit={handleSubmit}/>
 
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
@@ -344,9 +199,9 @@ const TransactionTable: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {tableRows.map(
+          {tableRows?.map(
             (
-              { img, name, amount, date, status, account, accountNumber, expiry },
+              {  description, amount, date, category, account }: any,
               index
             ) => {
               const isEditable = index === editableRowIndex;
@@ -355,11 +210,11 @@ const TransactionTable: React.FC = () => {
 
               return (
                 <tr key={index}>
-                  <Row isEditable={isEditable} classes={classes} title={'name'} value={name} img={img} index={index} handleFieldChange={handleFieldChange} />
-                  <Row isEditable={isEditable} classes={classes} title={'amount'} value={amount} img={img} index={index} handleFieldChange={handleFieldChange} />
-                  <Row isEditable={isEditable} classes={classes} title={'date'} value={date} img={img} index={index} handleFieldChange={handleFieldChange} />
-                  <RowSelect isEditable={isEditable} classes={classes} className={"w-fit"} title={'status'} value={status} img={img} index={index} handleFieldChange={handleFieldChange} />
-                  <Row isEditable={isEditable} classes={classes} title={'account'} value={account} img={img} index={index} handleFieldChange={handleFieldChange} />
+                  <Row isEditable={isEditable} classes={classes} title={'description'} value={description}  index={index} handleFieldChange={handleFieldChange} />
+                  <Row isEditable={isEditable} classes={classes} title={'amount'} value={amount}  index={index} handleFieldChange={handleFieldChange} />
+                  <Row isEditable={isEditable} classes={classes} title={'date'} value={date}  index={index} handleFieldChange={handleFieldChange} />
+                  <RowSelect isEditable={isEditable} classes={classes} className={"w-fit"} title={'category'} value={category}  index={index} handleFieldChange={handleFieldChange} />
+                  <Row isEditable={isEditable} classes={classes} title={'account'} value={account}  index={index} handleFieldChange={handleFieldChange} />
                   <td className={classes}>
                     {isEditable ? (
 

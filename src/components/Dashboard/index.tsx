@@ -2,6 +2,8 @@ import { Grid } from "@mui/material";
 import CustomCard from "../CustomCard";
 import Chart  from "../Chart";
 import { alpha, useTheme } from '@mui/material/styles';
+import { useSession } from "next-auth/react";
+import { api } from "~/utils/api";
 
 const useChartOptions = () => {
   const theme = useTheme();
@@ -95,6 +97,11 @@ const useChartOptions = () => {
 };
 
 export default function Dashboard() {
+
+  const { data: session, status } = useSession()
+
+  const {data: user} = api.user.getByEmail.useQuery(session?.user?.email as string);
+
   const chartOptions = useChartOptions();
 
 return (

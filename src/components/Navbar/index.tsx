@@ -1,3 +1,4 @@
+import { useSession, signIn, signOut } from "next-auth/react"
 import { useState, useEffect } from "react";
 import {
   Navbar,
@@ -9,6 +10,10 @@ import {
 import { Collapse } from "@mui/material";
 
 const navItems = [
+  {
+    route:'/',
+    title: 'Home'
+  },
   {
     route:'/dashboard',
     title: 'Dashboard'
@@ -33,6 +38,7 @@ const navItems = [
 ]
 
 export default function CustomNavbar() {
+  const { data: session, status } = useSession()
   const [openNav, setOpenNav] = useState(false);
 
   useEffect(() => {
@@ -55,7 +61,13 @@ export default function CustomNavbar() {
           </a>
         </Typography>)
       }
-
+      {status === "authenticated" &&
+        <button
+        type="button"
+        onClick={() => signOut()}
+        className="px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+        Sign Out
+      </button>}
     </div>
   );
 
@@ -65,6 +77,7 @@ export default function CustomNavbar() {
 
         <div className="hidden lg:block">
           {navList}
+
           </div>
         <IconButton
           variant="text"

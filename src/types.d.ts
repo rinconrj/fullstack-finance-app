@@ -1,21 +1,35 @@
 interface EditableRow {
   index: number
-   isEditable: boolean
-   classes: string
-   value: string
-   title: keyof TableRow
-   img?: string
-   className?: string
-   handleFieldChange: ((index: number, field: keyof TableRow, value: string) => void
+  isEditable: boolean
+  classes: string
+  value: string | number
+  title: keyof TableRow
+  img?: string
+  className?: string
+  handleFieldChange: ((index: number, field: keyof TableRow, value: string) => void)
 }
 
 interface TableRow {
-  img: string;
-  name: string;
-  amount: string;
-  date: string;
-  status: string;
+  id: string;
+  userId: string;
+  amount: number;
+  description: string;
+  date: Date;
+  category: string;
+  type: string;
   account: string;
-  accountNumber: string;
-  expiry: string;
+}
+
+interface SelectChangeEvent {
+  target: {
+    name?: string;
+    value: any;
+  };
+}
+
+
+export interface DefaultUser {
+  id: string
+  name?: string | null
+  email?: string | null
 }

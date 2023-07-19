@@ -4,7 +4,7 @@ import CustomSelect from '~/components/CustomSelect'
 
 
 
-export default function SelectEditableRow({ index, isEditable, title, classes, className, value, img, handleFieldChange }: EditableRow) {
+export default function SelectEditableRow({ index, isEditable, title, classes, className, value, img, handleFieldChange }: any) {
 
   return (
       <td className={classes}>

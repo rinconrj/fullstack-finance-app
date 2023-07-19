@@ -1,5 +1,5 @@
 import { Select, Option } from "@material-tailwind/react";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 interface CustomSelect {
   title: string
@@ -11,7 +11,8 @@ interface CustomSelect {
 export default function CustomSelect({title, label, className, options}:CustomSelect) {
   const [selectedOption, setSelectedOption] = useState('');
 
-  const handleSelectChange = (event):void => {
+  const handleSelectChange = (event:any):void => {
+    event.preventDefault();
     setSelectedOption(event.target.value);
   };
 
@@ -20,17 +21,16 @@ export default function CustomSelect({title, label, className, options}:CustomSe
       {label && <label htmlFor={title} className="block text-lg font-medium text-gray-700">
         {title}
       </label>}
-      <Select
+      <select
         id={title}
         name={title}
         value={selectedOption}
         onChange={handleSelectChange}
       >
-        <option value="">-- Select --</option>
         {options.map((option) => (
-          <option key={option} value={option}>{option}</option>
+          <option key={option}>{option}</option>
         ))}
-      </Select>
+      </select>
     </div>
   );
 }

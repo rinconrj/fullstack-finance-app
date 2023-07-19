@@ -11,8 +11,10 @@ export default function EditableRow({ index, isEditable, title, classes, value, 
             className="flex items-center  w-28 m-0"
             type={title ==="date" ? "date": "text"}
             value={value}
-            onChange={(event) =>
+            onChange={(event) =>{
+              if (event.target.value !== undefined){
               handleFieldChange(index, title , event.target.value)
+            }}
             }
           />
         ) : (
