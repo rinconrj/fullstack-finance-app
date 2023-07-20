@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import { Grid, Icon, Typography } from '@mui/material'
 import { Card as MuiCard, CardBody } from '@material-tailwind/react'
 import AddAccountModal from './AddAccountModal';
+import { useSession } from 'next-auth/react';
+import { api } from '~/utils/api';
 
 type Account = {
   userId: string;
@@ -23,6 +25,9 @@ function Card({children, onClick}: {children: React.ReactNode, onClick?: () => v
 
 
 export default function Account() {
+  const { data: session, status } = useSession()
+  const bankAccounts = api.bankAccount.getAll.useQuery()
+  const {mutate: addAccount} = api.bankAccount.create.useMutation()
   const [account, setAccount] = useState<Account>({
     userId: '',
     name: '',
@@ -31,23 +36,20 @@ export default function Account() {
   });
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Handle input changes
   const handleInputChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+    let { name, value }:{name: string; value:any} = event.target;
+
+    if(name === 'balance') value = parseFloat(value)
+
     setAccount({
       ...account,
-      [event.target.name]: event.target.value
+      [name]: value
     });
   };
 
-  // Handle form submission
-  const handleSubmit = (event:React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    // You can perform any necessary validation here before saving the account
-
-    // Save the account using your desired method (e.g., API call, database operation)
+  const handleSubmit = () => {
     saveAccount(account);
 
-    // Clear the form fields
     setAccount({
       userId: '',
       name: '',
@@ -55,28 +57,23 @@ export default function Account() {
       balance: 0.0
     });
 
-    // Open the modal
     setModalOpen(true);
   };
 
-  // Function to save the account
-  const saveAccount = (accountData:Account) => {
-    // Here you can perform the logic to save the account using your preferred method
-    console.log('Saving account:', accountData);
-    // Replace the console.log statement with your actual save logic
+const saveAccount = (accountData:Account) => {
+
+    if(session?.user.id){
+      addAccount({...accountData, userId: session?.user.id})
+    }
+
   };
-
-
-
-
-
 
   return (
   <Grid container>
     {modalOpen && <AddAccountModal account={account} setModalOpen={setModalOpen} handleInputChange={handleInputChange} handleSubmit={handleSubmit}/>}
       <Grid container></Grid>
       <Grid container></Grid>
-      <Grid container>
+      <Grid container spacing={3}>
         <Grid item>
         <Card onClick={() => setModalOpen(true)}>
           <Grid className='text-center'>
@@ -84,7 +81,19 @@ export default function Account() {
           <Typography variant='h5'>Add Account</Typography>
           </Grid>
         </Card>
-          </Grid>
+        </Grid>
+        {
+          bankAccounts.data?.map((account, index) => (
+            <Grid item key={index}>
+              <Card>
+                <Grid className='text-center'>
+                <Typography variant='h5'>{account.name}</Typography>
+                <Typography variant='h5'>{account.balance}</Typography>
+                </Grid>
+              </Card>
+            </Grid>
+          ))
+        }
       </Grid>
 
      </Grid>)

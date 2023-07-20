@@ -33,3 +33,7 @@ export interface DefaultUser {
   name?: string | null
   email?: string | null
 }
+
+export interface UserSession extends Session {
+  user: User;
+}

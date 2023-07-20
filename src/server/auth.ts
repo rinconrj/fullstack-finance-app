@@ -11,7 +11,6 @@ export const getServerAuthSession = ({ req }: { req: IncomingMessage }) => {
       return null;
     }
 
-    // Modify the return value based on your session structure
     return {
       session
     };
