@@ -26,5 +26,18 @@ export const transactionRouter = createTRPCRouter({
       return data
     }
 
-  })
+  }),
+  delete: publicProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
+    if (input) {
+      const data = await ctx.prisma.transaction.delete({
+        where: {
+          id: input
+        },
+      });
+
+      return data
+    }
+
+  }
+  ),
 });

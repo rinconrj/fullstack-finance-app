@@ -1,139 +1,58 @@
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import CustomCard from "../CustomCard";
-import Chart  from "../Chart";
-import { alpha, useTheme } from '@mui/material/styles';
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
-
-const useChartOptions = () => {
-  const theme = useTheme();
-
-  return {
-    chart: {
-      background: 'transparent',
-      stacked: false,
-      toolbar: {
-        show: false
-      }
-    },
-    colors: [theme.palette.primary.main, alpha(theme.palette.primary.main, 0.25)],
-    dataLabels: {
-      enabled: false
-    },
-    fill: {
-      opacity: 1,
-      type: 'solid'
-    },
-    grid: {
-      borderColor: theme.palette.divider,
-      strokeDashArray: 2,
-      xaxis: {
-        lines: {
-          show: false
-        }
-      },
-      yaxis: {
-        lines: {
-          show: true
-        }
-      }
-    },
-    legend: {
-      show: false
-    },
-    plotOptions: {
-      bar: {
-        columnWidth: '40px'
-      }
-    },
-    stroke: {
-      colors: ['transparent'],
-      show: true,
-      width: 2
-    },
-    theme: {
-      mode: theme.palette.mode
-    },
-    xaxis: {
-      axisBorder: {
-        color: theme.palette.divider,
-        show: true
-      },
-      axisTicks: {
-        color: theme.palette.divider,
-        show: true
-      },
-      categories: [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec'
-      ],
-      labels: {
-        offsetY: 5,
-        style: {
-          colors: theme.palette.text.secondary
-        }
-      }
-    },
-    yaxis: {
-      labels: {
-        formatter: (value:number) => (value > 0 ? `${value}K` : `${value}`),
-        offsetX: -10,
-        style: {
-          colors: theme.palette.text.secondary
-        }
-      }
-    }
-  };
-};
+import { useEffect, useState } from "react";
 
 export default function Dashboard() {
+  const { data: session } = useSession();
+  const [balance, setBalance] = useState(0);
 
-  const { data: session, status } = useSession()
+  const { data: user } = api.user.getByEmail.useQuery(
+    session?.user?.email as string
+  );
+  useEffect(() => {
+    if (user) {
+      const balance = user?.bankAccounts.reduce((acc, bankAccount) => {
+        return acc + bankAccount.balance;
+      }, 0);
 
-  const {data: user} = api.user.getByEmail.useQuery(session?.user?.email as string);
+      setBalance(balance);
+    }
+  }, [user]);
 
-  const chartOptions = useChartOptions();
-
-return (
-<Grid container>
-  <Grid container>
-    <Grid item className={`flex place-items-center`}>
-    <CustomCard title={'Saldo Actual'} value={0}/>
-    <CustomCard title={'Ingresos'} value={0}/>
-    <CustomCard title={'Gastos'} value={0}/>
-    <CustomCard title={'Deudas'} value={0}/>
-  </Grid>
-  <Grid container>
-
-    <Chart
-          height={350}
-          options={chartOptions}
-          series={[
-            {
-              name: 'Ingresos',
-              data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20]
-            },
-            {
-              name: 'Gastos',
-              data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13]
-            }
-          ]}
-          type="bar"
-          width="100%"/>
-  </Grid>
-  </Grid>
-
-
-</Grid>)
-
-};
+  return (
+    <Grid container>
+      <Grid container spacing={3}>
+        <Grid item xs={12} className="ml-8 mt-12">
+          <Typography className="w-full text-3xl tracking-[0.28] text-[#0f1016]">
+            Bienvenido {user?.name}
+          </Typography>
+        </Grid>
+        <Grid item className={`m-3 flex place-items-center content-around`}>
+          <CustomCard
+            title={"Saldo Actual"}
+            value={balance}
+            className="m-6 h-40 w-60 bg-green-500"
+          />
+          <CustomCard
+            title={"Ingresos"}
+            value={0}
+            className="m-6 h-40 w-60 bg-blue-500"
+          />
+          <CustomCard
+            title={"Gastos"}
+            value={0}
+            className="m-6 h-40 w-60 bg-red-500"
+          />
+          <CustomCard
+            title={"Deudas"}
+            value={0}
+            className="m-6 h-40 w-60 bg-gray-800"
+          />
+        </Grid>
+        <Grid container></Grid>
+      </Grid>
+    </Grid>
+  );
+}

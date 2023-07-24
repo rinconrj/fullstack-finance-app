@@ -2,11 +2,12 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import { api } from "~/utils/api";
-import CustomNavbar from "~/components/Navbar"
+import CustomNavbar from "~/components/Navbar";
 
 import { ThemeProvider } from "@material-tailwind/react";
 import "~/styles/globals.css";
 import { User } from "@prisma/client";
+import Layout from "~/components/layout";
 
 interface UserSession extends Session {
   user: User;
@@ -19,8 +20,9 @@ const MyApp: AppType<{ session: UserSession | null }> = ({
   return (
     <SessionProvider session={session}>
       <ThemeProvider>
-      <CustomNavbar/>
-      <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </ThemeProvider>
     </SessionProvider>
   );

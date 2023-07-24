@@ -50,7 +50,7 @@ export default function CustomNavbar() {
       {
         navItems.map(item=>
         <Typography
-        key={item.title}
+          key={item.title}
           as="li"
           variant="small"
           color="blue-gray"
