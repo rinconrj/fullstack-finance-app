@@ -31,8 +31,6 @@ const TABLE_HEAD = [
   "Account",
 ];
 
-const TABLE_ROWS: TableRow[] = [];
-
 const style = {
   position: "absolute" as const,
   top: "50%",
@@ -58,7 +56,7 @@ const AddRowModal: React.FC<{
     >
       <Box sx={style}>
         <form
-          className="mb-2 mt-8 w-80 max-w-screen-lg"
+          className="max-w-screen-lg mb-2 mt-8 w-80"
           onSubmit={handelSubmit}
         >
           <div className="mb-4 flex flex-col gap-6">

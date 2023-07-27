@@ -8,6 +8,9 @@ import "~/styles/globals.css";
 import { User } from "@prisma/client";
 import Layout from "~/components/layout";
 
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+
 interface UserSession extends Session {
   user: User;
 }
@@ -20,7 +23,9 @@ const MyApp: AppType<{ session: UserSession | null }> = ({
     <SessionProvider session={session}>
       <ThemeProvider>
         <Layout>
-          <Component {...pageProps} />
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Component {...pageProps} />
+          </LocalizationProvider>
         </Layout>
       </ThemeProvider>
     </SessionProvider>

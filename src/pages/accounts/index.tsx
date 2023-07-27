@@ -21,18 +21,18 @@ const logos: { [key: string]: string } = {
     "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Bradesco_logo.svg/1200px-Bradesco_logo.svg.png",
   santander:
     "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Bradesco_logo.svg/1200px-Bradesco_logo.svg.png",
-  "Caixa Econémica Federal":
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Bradesco_logo.svg/1200px-Bradesco_logo.svg.png",
+  bv: "https://www.bv.com.br/site/og_image.png",
   picpay:
     "https://upload.wikimedia.org/wikipedia/commons/5/5e/PicPay_Logogrande.png",
   nubank:
-    "https://upload.wikimedia.org/wikipedia/commons/f/f7/Nubank_logo_2021.svg",
+    "https://logospng.org/download/nubank/logo-nu-nubank-roxo-icon-2048.png",
 };
 
 const colors: { [key: string]: string } = {
   itau: "#FF7200",
   nubank: "#612F74",
   picpay: "#22c25f",
+  bv: "#616FC6",
 };
 
 export default function Account() {
@@ -90,7 +90,7 @@ export default function Account() {
       <Grid container spacing={3} className="m-7">
         <Grid item className="flex items-center">
           <Card
-            className="over:bg-blue-600 mt-6  h-56  w-96  cursor-pointer border-2 border-black  shadow-lg shadow-cyan-500/50 hover:shadow-2xl"
+            className="over:bg-blue-600 mt-6  h-56  w-96  cursor-pointer   shadow-lg shadow-black hover:shadow-2xl"
             onClick={() => setModalOpen(true)}
           >
             <Grid item className="text-center">

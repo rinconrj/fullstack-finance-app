@@ -11,7 +11,22 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
-
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.bv.com.br',
+        port: '',
+        pathname: '/site/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'logospng.org',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
 };
 
 

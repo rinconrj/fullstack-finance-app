@@ -13,7 +13,7 @@ export default withMT({
       '2xl': { 'min': '1536px' },
     },
     fontFamily: {
-      'sans': ['Public Sans', 'Helvetica', 'Arial', 'sans-serif']
+      'body': ['Public Sans', 'Helvetica', 'Arial', 'sans-serif']
     },
     extend: {
       spacing: {

@@ -23,7 +23,7 @@ export default function AccountCard({
     <Card
       onClick={onClick}
       style={{ backgroundColor: color }}
-      className={`mt-6 h-56 w-96 cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-cyan-500/50`}
+      className={`mt-6 h-56 w-96 cursor-pointer shadow-lg shadow-black hover:shadow-2xl hover:shadow-black`}
       {...props}
     >
       <CardBody className={"flex h-full items-center justify-center"}>
@@ -40,7 +40,7 @@ export default function AccountCard({
                 width={50}
                 height={50}
                 style={{
-                  backgroundColor: "transparent",
+                  backgroundColor: "white",
                   width: "50px",
                   height: "50px",
                   borderRadius: "10px",

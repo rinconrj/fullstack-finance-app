@@ -87,7 +87,7 @@ model CreditCard {
     name String
     type String
     balance Float
-    paymentDate DateTime
+    paymentDate String
     monthlyPaymentValue Float
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -95,7 +95,7 @@ model CreditCard {
 model Credit {
     id String @id @default(auto()) @map("_id") @db.ObjectId
     userId String @db.ObjectId
-    paymentDate DateTime
+    paymentDate String
     description String
     amount Float
     account String

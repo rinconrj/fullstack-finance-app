@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardBody,
@@ -9,14 +10,17 @@ import { Modal } from "@mui/base";
 import { Typography } from "@mui/material";
 import { Credit } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { FC, Suspense, useState } from "react";
+import { FC, Suspense, useEffect, useState } from "react";
 import { CustomInput } from "~/components/CustomInput";
 import CustomSelect from "~/components/CustomSelect";
+import EditableRow from "~/components/TransactionTable/components/EditableRow";
 import { api } from "~/utils/api";
+import { format, compareAsc, set } from "date-fns";
+import { DatePicker } from "@mui/x-date-pickers";
 
 interface ParsedData {
   id: string;
-  paymentDate: Date;
+  paymentDate: string;
   description: string;
   amount: number;
   account: string;
@@ -28,6 +32,61 @@ interface CreditModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+interface CreditBody {
+  paymentDate: string;
+  description: string;
+  amount: number;
+  account: string;
+  leftParts: number;
+  userId: string;
+}
+
+const HEADER_TITLE: string[] = [
+  "payment date",
+  "description",
+  "amount",
+  "account",
+  "total",
+  "leftParts",
+];
+
+const TABLE_HEAD = [
+  "payment date",
+  "description",
+  "amount",
+  "account",
+  "total",
+  "leftParts",
+];
+
+const TABLE_ROWS = [
+  {
+    name: "John Michael",
+    job: "Manager",
+    date: "23/04/18",
+  },
+  {
+    name: "Alexa Liras",
+    job: "Developer",
+    date: "23/04/18",
+  },
+  {
+    name: "Laurent Perrier",
+    job: "Executive",
+    date: "19/09/17",
+  },
+  {
+    name: "Michael Levi",
+    job: "Developer",
+    date: "24/12/08",
+  },
+  {
+    name: "Richard Gran",
+    job: "Manager",
+    date: "04/10/21",
+  },
+];
 
 const style = {
   position: "absolute" as const,
@@ -49,6 +108,16 @@ function CreditModal({ handleSubmit, isOpen, onClose }: CreditModalProps) {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState(0);
   const [leftParts, setLeftParts] = useState(0);
+  const [account, setAccount] = useState("");
+
+  const newCredit = {
+    paymentDate: format(paymentDate, "dd-MM-yyyy"),
+    description,
+    amount,
+    account,
+    leftParts,
+    userId: user?.id || "null",
+  };
 
   return (
     <Modal
@@ -62,14 +131,13 @@ function CreditModal({ handleSubmit, isOpen, onClose }: CreditModalProps) {
         <Typography className="mr-2 text-center text-[24px]  ">
           Add New Credit
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={() => handleSubmit(newCredit)}>
           <div className="flex flex-col gap-3">
-            <CustomInput
-              type="date"
+            <DatePicker
               label="Payment Date:"
-              name="paymentDate"
-              value={paymentDate.toISOString().substr(0, 10)}
-              onChange={(e) => setPaymentDate(new Date(e.target.value))}
+              format="dd-MM-yyyy"
+              value={paymentDate}
+              onChange={(e) => (e ? setPaymentDate(e) : e)}
             />
             <CustomInput
               label="Description:"
@@ -94,6 +162,7 @@ function CreditModal({ handleSubmit, isOpen, onClose }: CreditModalProps) {
               label="Accounts"
               name="account"
               options={user?.bankAccounts.map((item) => item.name) || []}
+              onChange={(e) => setAccount(e)}
             />
             <CustomInput
               label="Left Parts"
@@ -156,117 +225,94 @@ const CreditsHeader: FC<any> = ({ openModal }) => {
   );
 };
 
-const CreditsBody: FC<any> = () => {
-  const { data } = api.credits.getAll.useQuery();
-
-  const HeaderTable = () => {
-    const HEADER_TITLE: string[] = [
-      "payment date",
-      "description",
-      "amount",
-      "account",
-      "total",
-      "leftParts",
-    ];
-    return HEADER_TITLE.map((item, i) => (
-      <div
-        key={i}
-        className="flex h-12 w-full flex-row items-center justify-center gap-2 border-x-0 border-b border-t-0 border-solid border-[#f0f1f3] bg-[#f9f9fc]"
-      >
-        <Typography className="w-[149px] text-center text-sm font-medium capitalize leading-[20px] tracking-[0.07] ">
-          {item}
-        </Typography>
-        <img
-          src="https://file.rendit.io/n/yoRd5tIkseA7Q9Ht8wC8.svg"
-          className="min-h-0 w-4 min-w-0 shrink-0"
-        />
-      </div>
-    ));
-  };
-
-  const BodyTable = ({ data }: { data: Credit[] | undefined }) => {
-    if (!data) return null;
-
-    const parsedData: ParsedData[] = data.map((item) => {
-      return {
-        id: item.id,
-        paymentDate: new Date(item.paymentDate),
-        description: item.description,
-        amount: item.amount,
-        account: item.account,
-        leftParts: item.leftParts,
-        total: item.amount * item.leftParts,
-      };
-    });
-
-    return parsedData.map((item, i) => {
-      const keys = Object.keys(item);
-
-      const rowValues: any = [];
-
-      keys.forEach((key, i) => {
-        if (key === "id") return;
-        const value = (item as any)[key];
-        rowValues.push(
-          <div
-            key={i}
-            className="flex h-20 w-full flex-row items-center justify-center gap-2 border-x-0 border-b border-t-0 border-solid border-[#f0f1f3] bg-white"
-          >
-            <img
-              src="https://file.rendit.io/n/XWF3M3mC116v8h5eJl3Q.png"
-              className="min-h-0 w-10 min-w-0 shrink-0"
-            />
-            <div className="flex w-1/2 flex-col gap-1">
-              <Typography className="whitespace-nowrap  text-sm font-medium leading-[20px] tracking-[0.07] ">
-                {value}
-              </Typography>
-            </div>
-          </div>
-        );
-      });
-
-      return rowValues;
-    });
-  };
+const CreditsBody: FC<{ data?: Credit[] }> = ({ data }) => {
+  const parsedData: ParsedData[] | undefined = data?.map((item) => {
+    return {
+      id: item.id,
+      paymentDate: item.paymentDate,
+      description: item.description,
+      amount: item.amount,
+      account: item.account.toUpperCase(),
+      total: (item.amount * item.leftParts).toFixed(2),
+      leftParts: item.leftParts,
+    };
+  });
 
   return (
     <div className="flex w-auto flex-row items-center overflow-auto">
-      <HeaderTable />
-      <Suspense>
-        <BodyTable data={data} />
-      </Suspense>
+      <Card className="h-full w-full ">
+        <table className="w-full min-w-max table-auto text-left">
+          <thead>
+            <tr>
+              {TABLE_HEAD.map((head) => (
+                <th
+                  key={head}
+                  className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                >
+                  <Typography className="w-[149px] text-center text-sm font-medium capitalize leading-[20px]  ">
+                    {head}
+                  </Typography>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data?.length !== 0 &&
+              parsedData?.map((item, index) => {
+                const keys = Object.keys(item);
+
+                const rowValues: any = [];
+
+                keys.forEach((key, i) => {
+                  const classes = "p-4 border-b border-blue-gray-50";
+
+                  if (key === "id") return;
+                  const value = (item as any)[key];
+                  rowValues.push(
+                    <EditableRow
+                      // isEditable={isEditable}
+                      classes={classes}
+                      title={key}
+                      value={value}
+                      index={index}
+                      // handleFieldChange={handleFieldChange}
+                    />
+                  );
+                });
+
+                return <tr>{rowValues}</tr>;
+              })}
+          </tbody>
+        </table>
+      </Card>
     </div>
   );
 };
 
 const Credits: FC<any> = () => {
   const { data: session } = useSession();
-  const { mutate } = api.credits.create.useMutation();
+  const { data } = api.credits.getAll.useQuery();
+  const { mutate, isLoading } = api.credits.create.useMutation();
+  const [creditData, setCreditData] = useState(data);
 
   const [openModal, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formElement = event.currentTarget;
-    console.log(formElement);
-    if (session?.user.id) {
-      const data = {
-        paymentDate: formElement.paymentDate.value,
-        description: formElement.description.value,
-        amount: formElement.amount.value,
-        account: formElement.account.value,
-        leftParts: formElement.leftParts.value,
-        userId: session.user.id,
-      };
+  useEffect(() => {
+    if (data) {
+      setCreditData(data);
+    }
+  }, [data]);
 
-      mutate({ ...data });
+  const handleSubmit = async (body: CreditBody) => {
+    if (body?.userId) {
+      mutate({ ...body });
     }
 
     handleClose();
   };
-
+  console.log(creditData);
   return (
     <div
       className="mt-11 flex w-full justify-center"
@@ -288,15 +334,17 @@ const Credits: FC<any> = () => {
           onClose={handleClose}
         />
       )}
+
       <Card className="align-center w-auto">
         <CardHeader floated={false}>
           <CreditsHeader openModal={() => handleOpen()} />
         </CardHeader>
         <CardBody className="flex flex-col gap-4">
-          <CreditsBody />
+          <CreditsBody data={creditData} />
         </CardBody>
       </Card>
     </div>
   );
 };
+
 export default Credits;

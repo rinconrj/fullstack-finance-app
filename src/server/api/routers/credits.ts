@@ -14,7 +14,7 @@ export const creditsRouter = createTRPCRouter({
   create: publicProcedure.input(
     z.object({
       userId: z.string(),
-      paymentDate: z.date(),
+      paymentDate: z.string(),
       description: z.string(),
       amount: z.number(),
       account: z.string(),
