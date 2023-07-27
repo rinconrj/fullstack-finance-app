@@ -6,6 +6,6 @@ html {
   width: 100%;
   height: 100%;
   background: var(--neutral-gray-gray-25, #f9f9fc);
-  font-family: var(--font-public-sans);
+  font-family: "Public Sans";
   margin: 0;
 }

@@ -2,7 +2,6 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import { api } from "~/utils/api";
-import CustomNavbar from "~/components/Navbar";
 
 import { ThemeProvider } from "@material-tailwind/react";
 import "~/styles/globals.css";

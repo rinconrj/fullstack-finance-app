@@ -5,13 +5,15 @@ export default withMT({
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     screens: {
-      sm: '480px',
-      md: '768px',
-      lg: '976px',
-      xl: '1440px',
+      'xs': { 'min': '0px', 'max': '640px' },
+      'sm': { 'min': '640px', 'max': '767px' },
+      'md': { 'min': '768px', 'max': '1023px' },
+      'lg': { 'min': '1024px', 'max': '1279px' },
+      'xl': { 'min': '1280px', 'max': '1535px' },
+      '2xl': { 'min': '1536px' },
     },
     fontFamily: {
-      'sans': ['Helvetica', 'Arial', 'sans-serif']
+      'sans': ['Public Sans', 'Helvetica', 'Arial', 'sans-serif']
     },
     extend: {
       spacing: {
@@ -20,7 +22,12 @@ export default withMT({
       },
       borderRadius: {
         '4xl': '2rem',
-      }
+      },
+      colors: {
+        itau: "#FF7200",
+        nubank: "#612F74",
+        picpay: "#22c25f",
+      },
     }
   },
   plugins: [],

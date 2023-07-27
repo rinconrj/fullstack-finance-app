@@ -1,45 +1,38 @@
-import { useState } from "react";
+import React, { useRef, useState } from "react";
+import { Select, Option, SelectProps } from "@material-tailwind/react";
 
-interface CustomSelect {
-  title: string;
-  className?: string;
+interface CustomSelect extends Omit<SelectProps, "children"> {
   options: string[];
-  label?: string;
+  className?: string;
 }
 
 export default function CustomSelect({
-  title,
-  label,
-  className,
   options,
+  className,
+  ...props
 }: CustomSelect) {
+  const iselectRef = useRef<HTMLInputElement>(null);
   const [selectedOption, setSelectedOption] = useState("");
 
-  const handleSelectChange = (event: any): void => {
-    event.preventDefault();
-    setSelectedOption(event.target.value);
+  const handleSelectChange = (value?: string): void => {
+    console.log(value);
+    setSelectedOption(value || "");
   };
 
   return (
-    <div className={className || "w-72"}>
-      {label && (
-        <label
-          htmlFor={title}
-          className="block text-lg font-medium text-gray-700"
-        >
-          {title}
-        </label>
-      )}
-      <select
-        id={title}
-        name={title}
+    <div className={className || "w-72 font-sans"}>
+      <Select
+        {...props}
         value={selectedOption}
         onChange={handleSelectChange}
+        ref={iselectRef}
       >
-        {options.map((option) => (
-          <option key={option}>{option}</option>
+        {options.map((option: string) => (
+          <Option key={option} value={option} data-id={option}>
+            {option}
+          </Option>
         ))}
-      </select>
+      </Select>
     </div>
   );
 }

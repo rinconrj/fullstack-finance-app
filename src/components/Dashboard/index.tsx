@@ -1,8 +1,9 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, useMediaQuery } from "@mui/material";
 import CustomCard from "../CustomCard";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { useEffect, useState } from "react";
+import { useTheme } from "@material-tailwind/react";
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -29,27 +30,41 @@ export default function Dashboard() {
             Bienvenido {user?.name}
           </Typography>
         </Grid>
-        <Grid item className={`m-3 flex place-items-center content-around`}>
-          <CustomCard
-            title={"Saldo Actual"}
-            value={balance}
-            className="m-6 h-40 w-60 bg-green-500"
-          />
-          <CustomCard
-            title={"Ingresos"}
-            value={0}
-            className="m-6 h-40 w-60 bg-blue-500"
-          />
-          <CustomCard
-            title={"Gastos"}
-            value={0}
-            className="m-6 h-40 w-60 bg-red-500"
-          />
-          <CustomCard
-            title={"Deudas"}
-            value={0}
-            className="m-6 h-40 w-60 bg-gray-800"
-          />
+        <Grid
+          container
+          direction="row"
+          justifyContent={"space-between"}
+          alignItems="center"
+          className="m-3"
+        >
+          <Grid item xs={12} sm={6} md={3} className="flex justify-center">
+            <CustomCard
+              title={"Saldo Actual"}
+              value={balance}
+              className="m-6 h-40 w-60 bg-green-500"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className="flex justify-center">
+            <CustomCard
+              title={"Ingresos"}
+              value={0}
+              className="m-6 h-40 w-60 bg-blue-500"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className="flex justify-center">
+            <CustomCard
+              title={"Gastos"}
+              value={0}
+              className="m-6 h-40 w-60 bg-red-500"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} className="flex justify-center">
+            <CustomCard
+              title={"Deudas"}
+              value={0}
+              className="m-6 h-40 w-60 bg-gray-800"
+            />
+          </Grid>
         </Grid>
         <Grid container></Grid>
       </Grid>

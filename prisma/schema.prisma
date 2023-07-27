@@ -95,13 +95,14 @@ model CreditCard {
 model Credit {
     id String @id @default(auto()) @map("_id") @db.ObjectId
     userId String @db.ObjectId
-    name String
-    type String
-    balance Float
     paymentDate DateTime
-    monthlyPaymentValue Float
+    description String
+    amount Float
+    account String
+    leftParts Int
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
 
 model Payments {
     id String @id @default(auto()) @map("_id") @db.ObjectId
