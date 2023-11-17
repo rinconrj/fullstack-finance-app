@@ -27,7 +27,7 @@ export default withMT({
         itau: "#FF7200",
         nubank: "#612F74",
         picpay: "#22c25f",
-      },
+      }
     }
   },
   plugins: [],

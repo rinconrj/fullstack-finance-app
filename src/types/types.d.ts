@@ -37,3 +37,18 @@ export interface DefaultUser {
 export interface UserSession extends Session {
   user: User;
 }
+
+export type Account = {
+  userId: string;
+  name: string;
+  type: string;
+  balance: number;
+  id?: string
+};
+
+interface BrazilianBanks {
+		ispb: string
+		name: string
+		code: number
+		fullName: string
+}
